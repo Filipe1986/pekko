@@ -9,7 +9,7 @@ import org.apache.pekko.actor.typed.javadsl.StashBuffer;
 
 import java.util.function.Function;
 
-public class StashingActor {
+public class StashActor {
 
     public interface Command {}
 
@@ -30,7 +30,7 @@ public class StashingActor {
     private final String id;
     private boolean isProcessing;
 
-    public StashingActor(StashBuffer<Command> buffer, String id) {
+    public StashActor(StashBuffer<Command> buffer, String id) {
         this.buffer = buffer;
         this.id = id;
         this.isProcessing = false;
@@ -39,7 +39,7 @@ public class StashingActor {
     public static Behavior<Command> create(String id) {
         return Behaviors.withStash(
                 100,
-                stash -> Behaviors.setup(context -> new StashingActor(stash, id).initialBehaviorStart()));
+                stash -> Behaviors.setup(context -> new StashActor(stash, id).initialBehaviorStart()));
     }
 
     private Behavior<Command> initialBehaviorStart() {
@@ -86,12 +86,20 @@ public class StashingActor {
 
         ActorSystem<Void> actorSystem = ActorSystem.create(Behaviors.empty(), "TestActorSystem");
 
-        ActorRef<Command> actor1 = actorSystem.systemActorOf(StashingActor.create("uniqueId1"), "stashActor1", Props.empty());
+        ActorRef<Command> actor1 = actorSystem.systemActorOf(StashActor.create("uniqueId1"), "stashActor1", Props.empty());
 
 
         actor1.tell(new ProcessMessage("Message 1"));
         actor1.tell(new ProcessMessage("Message 2"));
         actor1.tell(new ProcessMessage("Message 3"));
         actor1.tell(new ProcessMessage("Message 4"));
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        actor1.tell(new ProcessMessage("Message 5"));
     }
 }

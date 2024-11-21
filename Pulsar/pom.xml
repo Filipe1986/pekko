@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.pekko</groupId>
+  <artifactId>Pulsar</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Pulsar</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <pekko.version>1.0.1</pekko.version>
+    <pulsar.version>3.3.2</pulsar.version>
+    <hoconConfig.version>1.4.2</hoconConfig.version>
+
+  </properties>
+
+
+  <dependencies>
+    <!--    Pekko   -->
+    <dependency>
+      <groupId>org.apache.pekko</groupId>
+      <artifactId>pekko-actor-typed_3</artifactId>
+      <version>${pekko.version}</version>
+    </dependency>
+
+    <!--    Pulsar   -->
+    <dependency>
+      <groupId>org.apache.pulsar</groupId>
+      <artifactId>pulsar-client</artifactId>
+      <version>${pulsar.version}</version>
+    </dependency>
+
+    <!-- Hocon Config -->
+    <dependency>
+      <groupId>com.typesafe</groupId>
+      <artifactId>config</artifactId>
+      <version>${hoconConfig.version}</version>
+    </dependency>
+
+  </dependencies>
+</project>
