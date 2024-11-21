@@ -7,6 +7,7 @@ import org.apache.pekko.actor.typed.Props;
 import org.apache.pekko.actor.typed.javadsl.Behaviors;
 import org.apache.pekko.actor.typed.javadsl.StashBuffer;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class StashActor {
@@ -50,13 +51,16 @@ public class StashActor {
 
     private Behavior<Command> onProcessMessage(ProcessMessage processMessage) {
         System.out.println("Received message: " + processMessage.getPayload());
+        System.out.println("isProcessing: " + isProcessing);
         if (isProcessing) {
             System.out.println("Stashing message: " + processMessage.getPayload());
             buffer.stash(processMessage);
         } else {
+            System.out.println("buffer: " + buffer);
             System.out.println("Processing message: " + processMessage.getPayload());
             isProcessing = true;
-            return save(processMessage);
+            CompletableFuture.runAsync(() -> save(processMessage));
+            return Behaviors.same();
         }
         return Behaviors.same();
     }
@@ -95,7 +99,7 @@ public class StashActor {
         actor1.tell(new ProcessMessage("Message 4"));
 
         try {
-            Thread.sleep(10000);
+            Thread.sleep(7000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
