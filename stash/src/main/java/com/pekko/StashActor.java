@@ -59,30 +59,34 @@ public class StashActor {
             System.out.println("buffer: " + buffer);
             System.out.println("Processing message: " + processMessage.getPayload());
             isProcessing = true;
-            CompletableFuture.runAsync(() -> save(processMessage));
-            return Behaviors.same();
+            CompletableFuture.runAsync(() -> {
+                System.out.println("Saving message ...");
+                sleep(1000);
+            }).thenRun(() -> save(processMessage));
         }
         return Behaviors.same();
     }
 
-    private Behavior<Command> save(ProcessMessage processMessage) {
-        System.out.println("Saving message: " + processMessage.getPayload());
+
+    private void save(ProcessMessage processMessage) {
+        System.out.println(processMessage.getPayload() + " saved");
+        isProcessing = false;
+        unstashNextMessage();
+    }
+
+    private void unstashNextMessage() {
+        if (!buffer.isEmpty()) {
+            System.out.println("Unstashing next message...");
+            buffer.unstash(initialBehaviorStart(), 1, Function.identity());
+        }
+    }
+
+    private static void sleep(int millis) {
         try {
-            Thread.sleep(1000);
+            Thread.sleep(millis);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
-        isProcessing = false;
-        return unstashNextMessage();
-    }
-
-    private Behavior<Command> unstashNextMessage() {
-        if (!buffer.isEmpty()) {
-            System.out.println("Unstashing next message...");
-            return buffer.unstash(initialBehaviorStart(), 1, Function.identity());
-        }
-        return initialBehaviorStart();
     }
 
 
@@ -98,11 +102,6 @@ public class StashActor {
         actor1.tell(new ProcessMessage("Message 3"));
         actor1.tell(new ProcessMessage("Message 4"));
 
-        try {
-            Thread.sleep(7000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
 
         actor1.tell(new ProcessMessage("Message 5"));
     }
