@@ -11,6 +11,7 @@ public class PulsarConfig {
 
     public static final String TOPIC = CONFIG.getString("topic");
     public static final String SUBSCRIPTION = CONFIG.getString("subscription");
-    public  static final SubscriptionType SUBSCRIPTION_TYPE = CONFIG.getString("subscription").equals("Key_Shared") ? SubscriptionType.Key_Shared : SubscriptionType.Exclusive;
-    public static final SubscriptionInitialPosition SUBSCRIPTION_INITIAL_POSITION = CONFIG.getString("subscriptionInitialPosition").equals("Earliest") ? SubscriptionInitialPosition.Earliest : SubscriptionInitialPosition.Latest;
+    public static final SubscriptionType SUBSCRIPTION_TYPE = SubscriptionType.valueOf(CONFIG.getString("subscriptionType"));
+     public static final SubscriptionInitialPosition SUBSCRIPTION_INITIAL_POSITION = CONFIG.getString("subscriptionInitialPosition").equals("Earliest") ? SubscriptionInitialPosition.Earliest : SubscriptionInitialPosition.Latest;
+
 }
